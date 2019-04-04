@@ -55,7 +55,7 @@ export default {
 
   methods: {
     bindViewTap () {
-      const url = '../logs/main'
+      const url = './logs'
       if (mpvuePlatform === 'wx') {
         mpvue.switchTab({ url })
       } else {

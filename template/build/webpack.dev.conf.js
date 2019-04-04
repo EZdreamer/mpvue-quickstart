@@ -8,9 +8,9 @@ var FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 var MpvueVendorPlugin = require('webpack-mpvue-vendor-plugin')
 
 // copy from ./webpack.prod.conf.js
-var path = require('path')
+// var path = require('path')
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
-var CopyWebpackPlugin = require('copy-webpack-plugin')
+// var CopyWebpackPlugin = require('copy-webpack-plugin')
 var OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 
 // add hot-reload related code to entry chunks
