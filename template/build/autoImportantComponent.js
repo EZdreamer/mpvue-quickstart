@@ -10,7 +10,7 @@ function ImportantComponent() {
   file.pages.forEach(page => {
     if (!page.config || !page.config.usingComponents) return
     for (let ket in page.config.usingComponents) {
-      results.push(ket.split('-')[1])
+      ket.split('-')[0] === 'wux' && results.push(ket.split('-')[1])
     }
   })
   results = [...new Set(results)]
