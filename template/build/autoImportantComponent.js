@@ -9,7 +9,7 @@ function ImportantComponent() {
     plugins = []
   file.pages.forEach(page => {
     if (!page.config || !page.config.usingComponents) return
-    for (let ket in page.usingComponents) {
+    for (let ket in page.config.usingComponents) {
       results.push(ket.split('-')[1])
     }
   })
