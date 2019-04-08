@@ -41,6 +41,6 @@ module.exports = {
   },
   // 全局引入组件
   usingComponents: {
-    'wux-search-bar': '../dist/search-bar/index'
+    'wux-search-bar': '../static/wux/search-bar/index'
   }
 }
