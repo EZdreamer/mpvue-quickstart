@@ -23,7 +23,7 @@
     </form>
 
     {{#if vuex}}
-    <a href="/pages/counter/main" class="counter">去往Vuex示例页面</a>
+    <a href="/pages/counter" class="counter">去往Vuex示例页面</a>
     {{/if}}
 
     <div class="all">
