@@ -28,7 +28,8 @@ module.exports = {
     'space-before-function-paren': 0,
     'semi': 0,
     'quotes': 0,
-    'eol-last': 0
+    'eol-last': 0,
+    'spaced-comment': 0
   },
   globals: {
     App: true,
