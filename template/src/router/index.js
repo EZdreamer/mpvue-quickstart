@@ -38,5 +38,9 @@ module.exports = {
       selectedIconPath: 'static/tabs/orders-active.png'
     }],
     position: 'bottom'
+  },
+  // 全局引入组件
+  usingComponents: {
+    'wux-search-bar': '../dist/search-bar/index'
   }
 }
