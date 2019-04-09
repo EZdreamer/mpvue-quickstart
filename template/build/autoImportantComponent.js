@@ -10,7 +10,7 @@ function ImportantComponent() {
 
   let results = [],
     plugins = []
-  const getC = function(usingComponents) {
+  const getC = function (usingComponents) {
     if (typeof usingComponents !== 'object') return
     for (let key in usingComponents) {
       if (key.split('-')[0] !== 'wux') continue
@@ -25,7 +25,7 @@ function ImportantComponent() {
       } catch (e) {
         console.log(chalk.yellow(e))
       }
-    } 
+    }
   }
   Array.isArray(file.pages) && file.pages.forEach(page => {
     if (!page.config || !page.config.usingComponents) return
@@ -36,15 +36,24 @@ function ImportantComponent() {
   }
   results = [...new Set(results)]
   results.forEach(c => {
-    plugins.push(new CopyWebpackPlugin([{
-      from: path.resolve(__dirname, '../node_modules/wux-weapp/dist/' + c),
-      to: path.resolve(config.build.assetsRoot, './static/wux/' + c)
-    }]))
+    const to = path.resolve(__dirname, '../static/wux/' + c)
+    try {
+      if (fs.statSync(to).isDirectory()) return
+      plugins.push(new CopyWebpackPlugin([{
+        from: path.resolve(__dirname, '../node_modules/wux-weapp/dist/' + c),
+        to
+      }]))
+    } catch (e) {
+      console.log(chalk.yellow(e))
+    }
   })
-  plugins.push(new CopyWebpackPlugin([{
-    from: path.resolve(__dirname, '../node_modules/wux-weapp/dist/helpers'),
-    to: path.resolve(config.build.assetsRoot, './static/wux/helpers')
-  }]))
+  const to = path.resolve(__dirname, '../static/wux/helpers')
+  if (!fs.statSync(to).isDirectory()) {
+    plugins.push(new CopyWebpackPlugin([{
+      from: path.resolve(__dirname, '../node_modules/wux-weapp/dist/helpers'),
+      to
+    }]))
+  }
   return plugins
 }
 
