@@ -44,11 +44,21 @@ function ImportantComponent() {
         to
       }]))
     } catch (e) {
-      console.log(chalk.yellow(e))
+      plugins.push(new CopyWebpackPlugin([{
+        from: path.resolve(__dirname, '../node_modules/wux-weapp/dist/' + c),
+        to
+      }]))
     }
   })
   const to = path.resolve(__dirname, '../static/wux/helpers')
-  if (!fs.statSync(to).isDirectory()) {
+  try {
+    if (!fs.statSync(to).isDirectory()) {
+      plugins.push(new CopyWebpackPlugin([{
+        from: path.resolve(__dirname, '../node_modules/wux-weapp/dist/helpers'),
+        to
+      }]))
+    }
+  } catch (e) {
     plugins.push(new CopyWebpackPlugin([{
       from: path.resolve(__dirname, '../node_modules/wux-weapp/dist/helpers'),
       to
