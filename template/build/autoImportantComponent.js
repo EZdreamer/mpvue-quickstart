@@ -37,30 +37,37 @@ function ImportantComponent() {
   results = [...new Set(results)]
   results.forEach(c => {
     const to = path.resolve(__dirname, '../static/wux/' + c)
-    try {
-      if (fs.statSync(to).isDirectory()) return
-      plugins.push(new CopyWebpackPlugin([{
-        from: path.resolve(__dirname, '../node_modules/wux-weapp/dist/' + c),
-        to
-      }]))
-    } catch (e) {
-      plugins.push(new CopyWebpackPlugin([{
-        from: path.resolve(__dirname, '../node_modules/wux-weapp/dist/' + c),
-        to
-      }]))
-    }
+    if (fs.existsSync(to)) return
+    plugins.push(new CopyWebpackPlugin([{
+      from: path.resolve(__dirname, '../node_modules/wux-weapp/dist/' + c),
+      to
+    }]))
   })
-  const to = path.resolve(__dirname, '../static/wux/helpers')
-  try {
-    if (!fs.statSync(to).isDirectory()) {
-      plugins.push(new CopyWebpackPlugin([{
-        from: path.resolve(__dirname, '../node_modules/wux-weapp/dist/helpers'),
-        to
-      }]))
-    }
-  } catch (e) {
+  var to = path.resolve(__dirname, '../static/wux/helpers')
+  if (!fs.existsSync(to)) {
     plugins.push(new CopyWebpackPlugin([{
       from: path.resolve(__dirname, '../node_modules/wux-weapp/dist/helpers'),
+      to
+    }]))
+  }
+  to = path.resolve(__dirname, '../static/wux/index.js')
+  if (!fs.existsSync(to)) {
+    plugins.push(new CopyWebpackPlugin([{
+      from: path.resolve(__dirname, '../node_modules/wux-weapp/dist/index.js'),
+      to
+    }]))
+  }
+  to = path.resolve(__dirname, '../static/wux/countdown')
+  if (!fs.existsSync(to)) {
+    plugins.push(new CopyWebpackPlugin([{
+      from: path.resolve(__dirname, '../node_modules/wux-weapp/dist/countdown'),
+      to
+    }]))
+  }
+  to = path.resolve(__dirname, '../static/wux/countup')
+  if (!fs.existsSync(to)) {
+    plugins.push(new CopyWebpackPlugin([{
+      from: path.resolve(__dirname, '../node_modules/wux-weapp/dist/countup'),
       to
     }]))
   }
