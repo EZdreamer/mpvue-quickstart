@@ -1,34 +1,81 @@
 var path = require('path')
-// var fs = require('fs')
+var fs = require('fs')
+var stat = fs.stat
 var utils = require('./utils')
 var config = require('../config')
 var webpack = require('webpack')
 var merge = require('webpack-merge')
 var vueLoaderConfig = require('./vue-loader.conf')
 var MpvuePlugin = require('webpack-mpvue-asset-plugin')
-// var glob = require('glob')
 var CopyWebpackPlugin = require('copy-webpack-plugin')
-// var relative = require('relative')
 var MpvueEntry = require('mpvue-entry')
 var ImportantComponent = require('./autoImportantComponent')
 
-function resolve (dir) {
+function resolve(dir) {
   return path.join(__dirname, '..', dir)
 }
 
-// function getEntry (rootSrc) {
-//   var map = {};
-//   glob.sync(rootSrc + '/pages/**/main.js')
-//   .forEach(file => {
-//     var key = relative(rootSrc, file).replace('.js', '');
-//     map[key] = file;
-//   })
-//    return map;
-// }
+var copy = function (src, dst) {
+  //读取目录
+  fs.readdir(src, function (err, paths) {
+    if (err) {
+      throw err
+    }
+    paths.forEach(function (path) {
+      var _src = src + '/' + path
+      var _dst = dst + '/' + path
+      var readable
+      var writable
+      stat(_src, function (err, st) {
+        if (err) {
+          throw err
+        }
 
-// const appEntry = { app: resolve('./src/main.js') }
-// const pagesEntry = getEntry(resolve('./src'), 'pages/**/main.js')
-// const entry = Object.assign({}, appEntry, pagesEntry)
+        if (st.isFile()) {
+          readable = fs.createReadStream(_src) // 创建读取流
+          writable = fs.createWriteStream(_dst) // 创建写入流
+          readable.pipe(writable)
+        } else if (st.isDirectory()) {
+          exists(_src, _dst, copy)
+        }
+      });
+    });
+  });
+}
+
+var exists = function (src, dst, callback) {
+  //测试某个路径下文件是否存在
+  fs.exists(dst, function (exists) {
+    if (exists) { //存在
+      callback(src, dst)
+    } else { //不存在
+      fs.mkdir(dst, function () { //创建目录
+        callback(src, dst)
+      })
+    }
+  })
+}
+
+if (!fs.existsSync(path.resolve(__dirname, '../static/wux'))) {
+  fs.mkdirSync(path.resolve(__dirname, '../static/wux'))
+}
+
+var to = path.resolve(__dirname, '../static/wux/index.js')
+if (!fs.existsSync(to)) {
+  fs.copyFileSync(path.resolve(__dirname, '../node_modules/wux-weapp/dist/index.js'), to)
+}
+to = path.resolve(__dirname, '../static/wux/countdown')
+if (!fs.existsSync(to)) {
+  exists(path.resolve(__dirname, '../node_modules/wux-weapp/dist/countdown'), to, copy)
+}
+to = path.resolve(__dirname, '../static/wux/countup')
+if (!fs.existsSync(to)) {
+  exists(path.resolve(__dirname, '../node_modules/wux-weapp/dist/countup'), to, copy)
+}
+to = path.resolve(__dirname, '../static/wux/helpers')
+if (!fs.existsSync(to)) {
+  exists(path.resolve(__dirname, '../node_modules/wux-weapp/dist/helpers'), to, copy)
+}
 
 let baseWebpackConfig = {
   // 如果要自定义生成的 dist 目录里面的文件路径，
@@ -41,16 +88,12 @@ let baseWebpackConfig = {
     path: config.build.assetsRoot,
     jsonpFunction: 'webpackJsonpMpvue',
     filename: '[name].js',
-    publicPath: process.env.NODE_ENV === 'production'
-      ? config.build.assetsPublicPath
-      : config.dev.assetsPublicPath
+    publicPath: process.env.NODE_ENV === 'production' ?
+      config.build.assetsPublicPath : config.dev.assetsPublicPath
   },
   resolve: {
     extensions: ['.js', '.vue', '.json'],
     alias: {
-      {{#if_eq build "standalone"}}
-      // 'vue$': `vue/dist/${config.build.fileExt.platform}/vue.esm.js`,
-      {{/if_eq}}
       'vue': 'mpvue',
       '@': resolve('src')
     },
@@ -59,9 +102,7 @@ let baseWebpackConfig = {
     mainFields: ['browser', 'module', 'main']
   },
   module: {
-    rules: [
-      {{#lint}}
-      {
+    rules: [{
         test: /\.(js|vue)$/,
         loader: 'eslint-loader',
         enforce: 'pre',
@@ -70,7 +111,6 @@ let baseWebpackConfig = {
           formatter: require('eslint-friendly-formatter')
         }
       },
-      {{/lint}}
       {
         test: /\.vue$/,
         loader: 'mpvue-loader',
@@ -78,7 +118,7 @@ let baseWebpackConfig = {
       },
       {
         test: /\.less$/,
-        loader: 'style-loader!css-loader!less-loader'
+        loader: 'style-loader!css-loader!less-loader',
       },
       {
         test: /\.js$/,
@@ -87,7 +127,9 @@ let baseWebpackConfig = {
           'babel-loader',
           {
             loader: 'mpvue-loader',
-            options: Object.assign({checkMPEntry: true}, vueLoaderConfig)
+            options: Object.assign({
+              checkMPEntry: true
+            }, vueLoaderConfig)
           },
         ]
       },
@@ -131,13 +173,11 @@ let baseWebpackConfig = {
     // }], {
     //   context: 'src/'
     // }),
-    new CopyWebpackPlugin([
-      {
-        from: path.resolve(__dirname, '../static'),
-        to: path.resolve(config.build.assetsRoot, './static'),
-        ignore: ['.*']
-      }
-    ]),
+    new CopyWebpackPlugin([{
+      from: path.resolve(__dirname, '../static'),
+      to: path.resolve(config.build.assetsRoot, './static'),
+      ignore: ['.*']
+    }]),
     // new CopyWebpackPlugin([
     //   {
     //     from: path.resolve(__dirname, '../node_modules/wux-weapp/dist'),
