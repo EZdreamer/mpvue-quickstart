@@ -1,7 +1,6 @@
 var path = require('path')
 var fs = require('fs')
 var chalk = require('chalk')
-var config = require('../config')
 var CopyWebpackPlugin = require('copy-webpack-plugin')
 const filePath = path.resolve(__dirname, '../src/router/index.js')
 const file = require(filePath)
@@ -10,6 +9,7 @@ function ImportantComponent() {
 
   let results = [],
     plugins = []
+
   const getC = function (usingComponents) {
     if (typeof usingComponents !== 'object') return
     for (let key in usingComponents) {
@@ -43,34 +43,6 @@ function ImportantComponent() {
       to
     }]))
   })
-  var to = path.resolve(__dirname, '../static/wux/helpers')
-  if (!fs.existsSync(to)) {
-    plugins.push(new CopyWebpackPlugin([{
-      from: path.resolve(__dirname, '../node_modules/wux-weapp/dist/helpers'),
-      to
-    }]))
-  }
-  to = path.resolve(__dirname, '../static/wux/index.js')
-  if (!fs.existsSync(to)) {
-    plugins.push(new CopyWebpackPlugin([{
-      from: path.resolve(__dirname, '../node_modules/wux-weapp/dist/index.js'),
-      to
-    }]))
-  }
-  to = path.resolve(__dirname, '../static/wux/countdown')
-  if (!fs.existsSync(to)) {
-    plugins.push(new CopyWebpackPlugin([{
-      from: path.resolve(__dirname, '../node_modules/wux-weapp/dist/countdown'),
-      to
-    }]))
-  }
-  to = path.resolve(__dirname, '../static/wux/countup')
-  if (!fs.existsSync(to)) {
-    plugins.push(new CopyWebpackPlugin([{
-      from: path.resolve(__dirname, '../node_modules/wux-weapp/dist/countup'),
-      to
-    }]))
-  }
   return plugins
 }
 
